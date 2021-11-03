@@ -1,6 +1,7 @@
 import numpy as np, math
 
 class Thompson:
+    name = "Thompson"
     def __init__(self, bandits):
         self.num = len(bandits)
         self.bandits = bandits
@@ -15,6 +16,7 @@ class Thompson:
         return self.bandits[bandit], reward
 
 class Greedy:
+    name = "Greedy"
     def __init__(self, bandits):
         self.t = 1
         self.bandits = bandits
@@ -31,6 +33,26 @@ class Greedy:
         self.totals[bandit] += r
         self.t += 1
         return self.bandits[bandit], r
+
+class UCB:
+    c = 1
+    name = "UCB"
+    def __init__(self, bandits):
+        self.t = 0
+        self.bandits = bandits
+        self.num = len(bandits)
+        self.totals = [0] * self.num
+        self.times = [0] * self.num
+
+    def pull(self):
+        bandit = max(range(self.num), key=lambda n: self.totals[n]/max(self.times[n], 1)+UCB.c*
+        math.sqrt(math.log(max(self.t, 1))/max(self.times[n], 1)))
+        r = self.bandits[bandit].pull()
+        self.times[bandit] += 1
+        self.totals[bandit] += r
+        self.t += 1
+        return self.bandits[bandit], r
+
 
 
 class Bandit:
