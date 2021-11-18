@@ -15,37 +15,6 @@ class Thompson:
         self.history[bandit].append(reward)
         return self.bandits[bandit], reward
 
-class Thompson2:
-    name = "Thompson2"
-    def __init__(self, bandits):
-        self.num = len(bandits)
-        self.bandits = bandits
-        self.prior, self.priormu = 100, 1
-        self.sums, self.sig, self.times, self.mu = \
-        [0] * self.num, [self.prior]*self.num, [0] * self.num, [self.priormu] * self.num
-    
-
-    def pull(self):
-        bandit = max(range(self.num), key=lambda n:
-        np.random.normal(self.mu[n], np.sqrt(self.sig[n])))
-        reward = self.bandits[bandit].pull()
-        self.sums[bandit] += reward
-        self.times[bandit] += 1
-        self.mu[bandit] = (self.mu[bandit]/self.sig[bandit]+self.sums[bandit]/.01)/\
-        (1/self.sig[bandit]+self.times[bandit]/.01)
-        self.sig[bandit] = 1/(1/self.prior+100*self.times[bandit])
-        
-        return self.bandits[bandit], reward
-
-class Random:
-    name = "Random"
-    def __init__(self, bandits):
-        self.num = len(bandits)
-        self.bandits = bandits
-    def pull(self):
-        bandit = np.random.choice(self.bandits)
-        return bandit, bandit.pull()
-
 class Greedy:
     name = "Greedy"
     def __init__(self, bandits):
