@@ -1,4 +1,5 @@
 import numpy as np, math
+from tqdm import tqdm
 
 class Thompson:
     name = "Thompson"
@@ -103,9 +104,9 @@ class Greedy:
         return self.bandits[bandit], r
 
 class UCB:
-    c = 1
     name = "UCB"
     def __init__(self, bandits):
+        self.c = 1
         self.t = 0
         self.bandits = bandits
         self.num = len(bandits)
@@ -120,6 +121,8 @@ class UCB:
         self.totals[bandit] += r
         self.t += 1
         return self.bandits[bandit], r
+    
+    
 
 
 

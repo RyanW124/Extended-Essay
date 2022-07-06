@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 class Algorithm:
     def __init__(self, n, bandits=None, *, alg) -> None:
@@ -26,14 +27,39 @@ class UCB(Algorithm):
     name = "UCB"
     def __init__(self, n, bandits=None) -> None:
         super().__init__(n, bandits, alg=UCBbandit)
+        UCBbandit.t = 1
+    def change_c(self, c):
+        for i in self.params:
+            i: UCBbandit
+            i.c = c
+
+    @classmethod
+    def hyperparameter_tuning(self, n, num_sets=5):
+        bandits = [[Bandit(i) for i in range(np.random.randint(50, 1000))] for _ in range(num_sets)]
+        points = np.random.uniform(0, 2, n)
+        max_reward, max_ucb = -float('inf'), None
+        for _ in tqdm(range(n)):
+            reward = 0
+            for i in range(num_sets):
+                ucb = UCB(len(bandits[i]), bandits[i])
+                ucb.change_c(points[i])
+                for _ in range(ucb.n):
+                    _, r = ucb.draw()
+                    reward += r
+            if reward > max_reward:
+                max_reward = reward
+                max_ucb = points[i]
+        return max_ucb
+
+
 
 class UCBbandit:
     t = 1
-    c = 1
     def __init__(self, bandit) -> None:
         self.bandit = bandit
         self.sum = 0
         self.N = 0.0001
+        self.c = 1
     def update(self, r):
         self.sum += r
         self.N += 1
@@ -81,7 +107,7 @@ class Bandit:
     N = 0
     def __init__(self, n, mean=None, std=None) -> None:
         self.mean = np.random.uniform(0, 100) if mean is None else mean
-        self.std = np.random.uniform(0, 10) if std is None else std
+        self.std = np.random.uniform(0, 25) if std is None else std
         self.n = n
         self.N = n
     def draw(self):
