@@ -17,3 +17,5 @@ Full essay can be found in EE.pdf
 ## How to run
 
 The experiments were ran in newmain.ipynb and the data are saved into time.csv and regret.csv
+
+Implementations of Thompson Sampling, UCB, and the bandits could be found in Model.py
